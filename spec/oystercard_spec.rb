@@ -21,8 +21,12 @@ describe Oystercard do
       expect(subject).to respond_to :touch_in
     end
     it "starts their journey when touch_in is called"do
+      subject.top_up(10)
       subject.touch_in
       expect(subject).to be_in_journey
+    end
+    it "Raises an error if not enough funds" do
+      expect { subject.touch_in }.to raise_error "No funds."
     end
     it "responds to the in_journey method" do
       expect(subject).to respond_to :in_journey?
@@ -33,7 +37,12 @@ describe Oystercard do
     it "responds to the touch_out method" do
       expect(subject).to respond_to :touch_out
     end
+    it "takes off the fare from the balance when touching out" do
+      subject.top_up(5)
+      expect { subject.touch_out }.to change { subject.balance }.by(-1)
+    end
     it "knows that when it has touched out, it is no longer in journey" do
+      subject.top_up(10)
       subject.touch_in
       subject.touch_out
       expect(subject).not_to be_in_journey
