@@ -1,10 +1,14 @@
+require "station.rb"
+
 class Oystercard
-attr_reader :balance, :entry_station
+attr_reader :balance, :entry_station, :exit_station, :history
 
 MAX_BALANCE = 90
 MIN_BALANCE = 1
 
   def initialize
+    @history = []
+    @exit_station = nil
     @entry_station = nil
     @balance = 0
     @state = false
@@ -32,13 +36,18 @@ MIN_BALANCE = 1
   def touch_out(exit_station)
     @state = false
     deduct(1)
-    @entry_station = nil
     @exit_station = exit_station
+    add_history
+    @entry_station = nil
   end
 
   private
 
   def deduct(n)
     @balance -= n
+  end
+
+  def add_history
+    @history << { start: entry_station, end: exit_station }
   end
 end
