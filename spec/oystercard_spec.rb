@@ -4,6 +4,7 @@ describe Oystercard do
 
 let(:entry_station){ double :station }
 let(:exit_station){ double :station }
+let(:journey){ {start: entry_station, end: exit_station} }
 
   context "#balance" do
     it "has a balance" do
@@ -23,6 +24,9 @@ let(:exit_station){ double :station }
   context "touch_in tests" do
     it "responds to the touch_in method" do
       expect(subject).to respond_to :touch_in
+    end
+    it "has no journeys by default" do
+      expect(subject.history).to eq([])
     end
     it "starts their journey when touch_in is called"do
       subject.top_up(10)
@@ -49,6 +53,7 @@ let(:exit_station){ double :station }
       subject.touch_in(entry_station)
       expect(subject.entry_station).to eq entry_station
     end
+
   end
 
   context 'touch_out tests' do
@@ -64,6 +69,12 @@ let(:exit_station){ double :station }
       subject.touch_in(entry_station)
       subject.touch_out(exit_station)
       expect(subject).not_to be_in_journey
+    end
+    it "finds it has a history after travelling" do
+      subject.top_up(10)
+      subject.touch_in(entry_station)
+      subject.touch_out(exit_station)
+      expect(subject.history).not_to be_empty
     end
   end
 end
